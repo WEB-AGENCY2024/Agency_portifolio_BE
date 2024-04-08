@@ -1,0 +1,45 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "WEB Agency API",
+    "version": "1.0.0",
+    "description": "API documentation for the Marketplace project which is  A comprehensive marketplace platform connecting buyers and sellers, where each seller manages their stall, stock, pricing, and discounts. Users can browse various stalls, add items to their cart, manage purchases, and rate vendors. Admins oversee user roles, stock, and platform operations. Key features include user management, shopping cart, checkout, rating system, and vendor stock management. The platform includes user, vendor, admin dashboards, contact form, login/signup, with optional features like subscriptions, email notifications, chatbot, and delivery. Built with Node, Express, Postgres, and React"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Development server"
+    },
+    {
+      "url": "waiting for deployments",
+      "description": "Production server (HTTPS)"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Welcome",
+      "description": "API endpoints for landing page "
+    }
+  ],
+  "paths": {
+    "/api/welcome": {
+      "get": {
+        "summary": "Welcome",
+        "tags": ["Welcome"],
+        "responses": {
+          "200": {
+            "description": "Welcome Page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
