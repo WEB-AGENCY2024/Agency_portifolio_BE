@@ -27,3 +27,6 @@ npm run dev
 
 ### use browser or postman
 - #### localhost:3000/api/welcome
+
+### Add others End-point :
+- #### localhost:3000/api/welcome
