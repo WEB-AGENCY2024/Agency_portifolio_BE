@@ -1,33 +1,38 @@
 const express = require("express");
-const dotenv = require("dotenv");
-const mongoose = require("mongoose");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
-const Welcome = require("./routes/welcome");
+const userRoutes = require("./routes/welcome");
+const session = require("express-session");
+const passport = require("./config/passport.config");
+
+const { config } = require("dotenv");
+const dbConnection = require("./config/dbconfig");
+config({ path: "./config.env" });
 
 const app = express();
-dotenv.config({ path: "./config.env" });
+app.use(express.json());
 //import the port
 const port = process.env.PORT;
-//todo :add the database here
+app.use(
+  session({
+    secret: process.env.SESSION,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
 const DB = process.env.DATABASE.replace(
   "<password>",
   process.env.DATABASE_PASSWORD
 );
-
-mongoose
-  .connect(DB, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-  })
-  .then(() => console.log("DB connection successful"));
-
+console.log(DB);
 //SWAGGER TO TEST OUR API
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.use("/api", Welcome);
+app.use("/api/users", userRoutes);
+app.use(passport.initialize());
+app.use(passport.session);
 
 app.listen(port, () => {
   console.log(`server is running on port ${port}....`);
+  dbConnection(DB);
 });

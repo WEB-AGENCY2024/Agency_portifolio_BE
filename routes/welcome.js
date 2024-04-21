@@ -1,10 +1,11 @@
 const express = require("express");
-const Welcome = express.Router();
+const userSignup = require("../controllers/user.controller");
+const authenticate = require("../middlewares/user.auth");
 
-Welcome.get("/welcome", (req, res) => {
-  res
-    .status(200)
-    .json({ message: "welcome to our web API of portifolio Agency" });
-});
+const userRoutes = express.Router();
 
-module.exports = Welcome;
+// User signup route
+userRoutes.post("/signup", userSignup.userSignup);
+userRoutes.post("/login", userSignup.userLogin);
+userRoutes.get("/profile", authenticate, userSignup.profile);
+module.exports = userRoutes;
