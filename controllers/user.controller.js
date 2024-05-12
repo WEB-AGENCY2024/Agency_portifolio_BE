@@ -4,8 +4,15 @@ const User = require("./../models/Users");
 const { passwordEncrypt, passwordCompare } = require("../utils/encrypt");
 const { userToken } = require("../utils/token.generator");
 const { sendVerificationMail } = require("../utils/mailer");
+const { signupValid } = require("../validation/validation");
 exports.userSignup = async (req, res) => {
   try {
+    const validateUserData = signupValid(req.body);
+    if (validateUserData.error) {
+      return res
+        .status(400)
+        .json({ status: "Fail", message: validateUserData.error.message });
+    }
     const { firstName, lastName, email, password } = req.body;
     const userPassword = await passwordEncrypt(password);
     console.log(req.body);
@@ -42,7 +49,7 @@ exports.userLogin = async (req, res) => {
     if (!findUser) {
       return res.status(400).json({
         message: "Fail",
-        error: "User with this email is not exist, please try another email",
+        error: "User with this email doesn't exist, please try another email",
       });
     }
     const passwordCheck = await passwordCompare(findUser.password, password);

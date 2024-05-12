@@ -4,15 +4,18 @@ const swaggerDocument = require("./swagger.json");
 const userRoutes = require("./routes/welcome");
 const session = require("express-session");
 const passport = require("./config/passport.config");
+const cors = require("cors");
 
 const { config } = require("dotenv");
 const dbConnection = require("./config/dbconfig");
 config({ path: "./config.env" });
 
 const app = express();
-app.use(express.json());
+
 //import the port
+app.use(cors());
 const port = process.env.PORT;
+
 app.use(
   session({
     secret: process.env.SESSION,
@@ -27,10 +30,12 @@ const DB = process.env.DATABASE.replace(
 );
 console.log(DB);
 //SWAGGER TO TEST OUR API
+
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/users", userRoutes);
 app.use(passport.initialize());
 app.use(passport.session);
+app.use(express.json());
 
 app.listen(port, () => {
   console.log(`server is running on port ${port}....`);
