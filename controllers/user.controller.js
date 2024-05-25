@@ -5,6 +5,7 @@ const { passwordEncrypt, passwordCompare } = require("../utils/encrypt");
 const { userToken } = require("../utils/token.generator");
 const { sendVerificationMail } = require("../utils/mailer");
 const { signupValid } = require("../validation/validation");
+const { uploadImageCloudinary } = require("../utils/cloudinary");
 exports.userSignup = async (req, res) => {
   try {
     const validateUserData = signupValid(req.body);
@@ -15,7 +16,6 @@ exports.userSignup = async (req, res) => {
     }
     const { firstName, lastName, email, password } = req.body;
     const userPassword = await passwordEncrypt(password);
-    console.log(req.body);
     const newUser = new User({
       firstName,
       lastName,
@@ -73,4 +73,51 @@ exports.profile = (req, res) => {
   try {
     res.status(200).json({ message: "User profile", user: req.user });
   } catch (err) {}
+};
+
+// exports.uploadFile = async (req, res) => {
+//   try {
+//     const result = await upload.uploadImage(req);
+//     res.status(200).json(result);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
+
+exports.editProfile = async (req, res) => {
+  try {
+    const { firstName, lastName, email } = req.body;
+    const profile = await User.findOne({
+      _id: req.user.id,
+    });
+
+    if (!req.file) {
+      return res.status(500).json({ error: "No Image file found" });
+    }
+
+    let imageLink = await uploadImageCloudinary(req.file.buffer);
+
+    // Update the profile properties
+    if (firstName) {
+      profile.firstName = firstName;
+    }
+    if (lastName) {
+      profile.lastName = lastName;
+    }
+    if (email) {
+      profile.email = email;
+    }
+    if (imageLink) {
+      profile.profilePic = imageLink;
+    }
+
+    await profile.save();
+    res.status(201).json({
+      profile,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ err: "internal server error" });
+  }
 };
