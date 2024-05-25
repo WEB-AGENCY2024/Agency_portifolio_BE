@@ -1,4 +1,5 @@
 const express = require("express");
+const bodyParse = require("body-parser");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 const userRoutes = require("./routes/welcome");
@@ -11,7 +12,9 @@ const dbConnection = require("./config/dbconfig");
 config({ path: "./config.env" });
 
 const app = express();
-
+app.use(express.json());
+app.use(bodyParse.json());
+app.use(bodyParse.urlencoded({ extended: true }));
 //import the port
 app.use(cors());
 const port = process.env.PORT;
@@ -35,7 +38,6 @@ app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/users", userRoutes);
 app.use(passport.initialize());
 app.use(passport.session);
-app.use(express.json());
 
 app.listen(port, () => {
   console.log(`server is running on port ${port}....`);
